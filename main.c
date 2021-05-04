@@ -37,20 +37,16 @@ int main(int argc, char **argv) {
 
     fd = inotify_init();
 
-    if (fd < 0) {
+    if (fd < 0)
         perror("inotify_init");
 
-    }
-
-    wd = inotify_add_watch(fd, path, IN_MODIFY /* | IN_CREATE | IN_DELETE */);
+    wd = inotify_add_watch(fd, path, IN_MODIFY);
     while (1) {
         length = read(fd, buffer, BUF_LEN);
         i = 0; // TODO fix bug.
 
-        if (length < 0) {
+        if (length < 0)
             perror("read");
-
-        }
 
         while (i < length) {
             struct inotify_event *event = (struct inotify_event *) &buffer[i]; // send info from temp buffer to event
@@ -60,9 +56,7 @@ int main(int argc, char **argv) {
                     if (!strcmp(file_name, event->name)) { // if filename == event.name
                         system(command);
                     }
-
                 }
-
             }
             i += EVENT_SIZE + event->len;
 
@@ -71,6 +65,9 @@ int main(int argc, char **argv) {
 
     (void) inotify_rm_watch(fd, wd);
     (void) close(fd);
+    free(file_name);
+    free(path);
+    free(command);
 
     return 0;
 
