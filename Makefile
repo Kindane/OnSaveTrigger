@@ -1,6 +1,2 @@
-all: build
-
-.PHONY: build
-
-build:
+all:
 	gcc main.c -o main
